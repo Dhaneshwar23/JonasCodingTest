@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Web.Http;
 using AutoMapper;
 using BusinessLayer.Model.Interfaces;
+using BusinessLayer.Model.Models;
 using WebApi.Models;
 
 namespace WebApi.Controllers
@@ -18,32 +20,48 @@ namespace WebApi.Controllers
             _mapper = mapper;
         }
         // GET api/<controller>
-        public IEnumerable<CompanyDto> GetAll()
+        [HttpGet]
+        [Route("api/GetAll")]
+        public async Task<IEnumerable<CompanyDto>> GetAll()
         {
-            var items = _companyService.GetAllCompanies();
+            var items = await _companyService.GetAllCompaniesAsync();
             return _mapper.Map<IEnumerable<CompanyDto>>(items);
         }
 
         // GET api/<controller>/5
-        public CompanyDto Get(string companyCode)
+        public async Task<CompanyDto> Get(string companyCode)
         {
-            var item = _companyService.GetCompanyByCode(companyCode);
+            var item = await _companyService.GetCompanyByCodeAsync(companyCode);
             return _mapper.Map<CompanyDto>(item);
         }
 
         // POST api/<controller>
-        public void Post([FromBody]string value)
+        public async Task<IHttpActionResult> Post([FromBody]CompanyDto companyDto)
         {
+            var company = _mapper.Map<CompanyInfo>(companyDto);
+
+            await _companyService.SaveCompanyAsync(company);
+
+            return Ok("Company Inserted");
         }
 
         // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
+        public async Task<IHttpActionResult> Put(string companyId, [FromBody]CompanyDto companyDto)
         {
+            var company = _mapper.Map<CompanyInfo>(companyDto);
+
+            await _companyService.UpdateCompanyAsync(companyId, company);
+
+            return Ok("Company details updated");
+
         }
 
         // DELETE api/<controller>/5
-        public void Delete(int id)
+        public async Task<IHttpActionResult> Delete(string companyId)
         {
+            await _companyService.DeleteCompanyAsync(companyId);
+
+            return Ok("company deleted");
         }
     }
 }
