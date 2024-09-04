@@ -23,29 +23,46 @@ namespace BusinessLayer.Services
         }
         public async Task<IEnumerable<EmployeeInfo>> GetAllEmployeesAsync()
         {
-            var res =  await _employeeRepository.GetAllAsync();
+            var res = await _employeeRepository.GetAllAsync();
 
             return _mapper.Map<IEnumerable<EmployeeInfo>>(res);
         }
 
         public async Task<EmployeeInfo> GetEmployeeByCodeAsync(string employeeCode)
         {
-            var res = await _employeeRepository.GetEmployeeByCodeAsync(employeeCode);
+            if (String.IsNullOrEmpty(employeeCode))
+            {
+                throw new Exception("Employee code is not provided");
+            }
+            else
+            {
+                var res = await _employeeRepository.GetEmployeeByCodeAsync(employeeCode);
 
-            return _mapper.Map<EmployeeInfo>(res);
+                return _mapper.Map<EmployeeInfo>(res);
+            }
 
         }
 
         public async Task SaveEmployeeAsync(EmployeeInfo employeeInfo)
         {
-            var employee = _mapper.Map<Employee>(employeeInfo);
+            if (employeeInfo == null)
+            {
+                throw new Exception("Employee information is not provided");
+            }
+            else
+            {
+                var employee = _mapper.Map<Employee>(employeeInfo);
 
-            await _employeeRepository.SaveEmployeeAsync(employee);
+                await _employeeRepository.SaveEmployeeAsync(employee);
+            }
         }
 
         public async Task UpdateEmployeeAsync(string employeeCode, EmployeeInfo employeeInfo)
         {
-
+            if(String.IsNullOrEmpty(employeeCode))
+            {
+                throw new Exception("Employee code is not provided");
+            }
             var existingEmployee = _employeeRepository.GetEmployeeByCodeAsync(employeeCode);
 
             if (existingEmployee == null)
@@ -61,7 +78,14 @@ namespace BusinessLayer.Services
 
         public async Task DeleteEmployeeAsync(string employeeCode)
         {
-            await _employeeRepository.DeleteEmployeeAsync(employeeCode);
+            if (String.IsNullOrEmpty(employeeCode))
+            {
+                throw new Exception("Please provide employee code");
+            }
+            else
+            {
+                await _employeeRepository.DeleteEmployeeAsync(employeeCode);
+            }
         }
     }
 }

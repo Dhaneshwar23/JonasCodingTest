@@ -28,22 +28,44 @@ namespace BusinessLayer.Services
 
         public async Task<CompanyInfo> GetCompanyByCodeAsync(string companyCode)
         {
-            var result = await _companyRepository.GetByCode(companyCode);
-            return _mapper.Map<CompanyInfo>(result);
+            if (String.IsNullOrEmpty(companyCode))
+            {
+                throw new Exception("Company code is not provided");
+            }
+            else
+            {
+                var result = await _companyRepository.GetByCode(companyCode);
+
+                return _mapper.Map<CompanyInfo>(result);
+            }
         }
 
         public async Task SaveCompanyAsync(CompanyInfo companyInfo)
         {
-            var company = _mapper.Map<Company>(companyInfo);
+            var existingCompany = await GetCompanyByCodeAsync(companyInfo.CompanyCode);
 
-            await _companyRepository.SaveCompany(company);
+            if (existingCompany != null)
+            {
+                throw new Exception("Company already exists");
+            }
+            else
+            {
+                var company = _mapper.Map<Company>(companyInfo);
+
+                await _companyRepository.SaveCompany(company);
+            }
         }
 
         public async Task UpdateCompanyAsync(string companyCode, CompanyInfo companyInfo)
         {
+            if (String.IsNullOrEmpty(companyCode))
+            {
+                throw new Exception("Company code not provided");
+            }
+
             var existingCompany = await GetCompanyByCodeAsync(companyCode);
 
-            if (existingCompany == null )
+            if (existingCompany == null)
             {
                 throw new Exception("Company doesn't exisst");
             }
@@ -56,7 +78,14 @@ namespace BusinessLayer.Services
 
         public async Task DeleteCompanyAsync(string companyCode)
         {
-            await _companyRepository.DeleteCompany(companyCode);
+            if (companyCode == null)
+            {
+                throw new Exception("Company Code is not provided");
+            }
+            else
+            {
+                await _companyRepository.DeleteCompany(companyCode);
+            }
         }
 
     }
