@@ -36,6 +36,8 @@ namespace WebApi.Controllers
         }
 
         // POST api/<controller>
+        [HttpPost]
+        [Route("api/InsertCompany")]
         public async Task<IHttpActionResult> Post([FromBody]CompanyDto companyDto)
         {
             var company = _mapper.Map<CompanyInfo>(companyDto);
