@@ -25,7 +25,7 @@ namespace BusinessLayer.Services
         {
             var res =  await _employeeRepository.GetAllAsync();
 
-            return (IEnumerable<EmployeeInfo>)_mapper.Map<EmployeeInfo>(res);
+            return _mapper.Map<IEnumerable<EmployeeInfo>>(res);
         }
 
         public async Task<EmployeeInfo> GetEmployeeByCodeAsync(string employeeCode)
@@ -45,6 +45,7 @@ namespace BusinessLayer.Services
 
         public async Task UpdateEmployeeAsync(string employeeCode, EmployeeInfo employeeInfo)
         {
+
             var existingEmployee = _employeeRepository.GetEmployeeByCodeAsync(employeeCode);
 
             if (existingEmployee == null)

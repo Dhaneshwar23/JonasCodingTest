@@ -30,6 +30,7 @@ namespace DataAccessLayer.Repositories
 
         public async Task<bool> SaveEmployeeAsync(Employee employee)
         {
+            
             var exisitngEmployee = _employeeDbWrapper.Find(e => e.CompanyCode.Equals(employee.CompanyCode)).FirstOrDefault();
             if (exisitngEmployee != null)
             {
@@ -45,7 +46,7 @@ namespace DataAccessLayer.Repositories
 
             }
 
-            return await _employeeDbWrapper.InsertAsync(exisitngEmployee);
+            return await _employeeDbWrapper.InsertAsync(employee);
         }
 
         public async Task<bool> DeleteEmployeeAsync(string employeeCode)
